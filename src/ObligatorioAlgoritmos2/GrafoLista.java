@@ -10,56 +10,153 @@ package ObligatorioAlgoritmos2;
  * @author alumnoFI
  */
 public class GrafoLista {
-    
-    int size;
-    int cantNodos;
-    ListaAdyacencia[] listaAdy;
-    boolean[] nodosUsados;
-    
-    //constructor
-    public GrafoLista(int n){
+
+    public int size;
+    public int cantNodos;
+    public ListaAdyacencia[] listaAdy;
+    public NodoPunto[] nodosUsados;
+
+    // constructor
+    public GrafoLista(int n) {
         this.size = 0;
         this.cantNodos = n;
         this.listaAdy = new ListaAdyacencia[n + 1];
-        for (int i = 0; i < n; i++) {
+
+        for (int i = 0; i < n + 1; i++) {
             this.listaAdy[i] = new ListaAdyacencia();
         }
-        this.nodosUsados = new boolean[n + 1];
+        this.nodosUsados = new NodoPunto[n + 1];
     }
-    
-    public void AgregarVertice(int n){
-        this.nodosUsados[n] = true;
-        this.size++; 
+
+    public void AgregarVertice(int n, NodoPunto nodo) {
+        this.nodosUsados[n] = nodo;
+        this.size++;
     }
-    
-    public void AgregarArista(int o,int d ,int p){
-        this.listaAdy[o].InsertarInicio(d , p); //metodo a crear
-         this.listaAdy[d].InsertarInicio(o , p); 
-        //si fuera bidereccionar hay que agregar tambien para el otro lado
+
+    public void AgregarArista(int o, int d, int p) {
+        this.listaAdy[o].InsertarInicio(d, p); // metodo a crear
+        this.listaAdy[d].InsertarInicio(o, p);
+        // si fuera bidereccionar hay que agregar tambien para el otro lado
     }
-    
-    public void EliminarVertice(int n){
-        this.nodosUsados[n] = false;
+
+    public void EliminarVertice(int n) {
+        this.nodosUsados[n].setUsado(false);
         this.size--;
         this.listaAdy[n] = new ListaAdyacencia();
         for (int i = 0; i < listaAdy.length; i++) {
             this.listaAdy[i].Eliminar(n);
         }
     }
-    
-    public boolean EsVacio(){
+
+    public boolean EsVacio() {
         return this.size == 0;
     }
-    
-    public ListaAdyacencia VerticesAdyacents(int v){
+
+    public ListaAdyacencia VerticesAdyacents(int v) {
         return this.listaAdy[v];
     }
-    
-    public boolean SonAdyacentes(int a , int b){
+
+    public boolean SonAdyacentes(int a, int b) {
         return this.listaAdy[a].Existe(b);
     }
-    
-    public boolean ExisteVertice(int n){
+
+    public NodoPunto ExisteVertice(int n) {
         return this.nodosUsados[n];
     }
+
+    public NodoPunto ObtenerNodoPorCoord(double coordX, double coordY) {
+
+        NodoPunto nodo = null;
+        int i = 1;
+
+        while (nodo == null && i < size) {
+
+            if (nodosUsados[i].getCoordX() == coordX && nodosUsados[i].getCoordY() == coordY) {
+
+                nodo = nodosUsados[i];
+                return nodo;
+            }
+
+            i++;
+        }
+
+        return nodo;
+        // evalua el ultimo caso?
+    }
+
+    public int ObtenerPosicionPorCoordenadas(double coordX, double coordY) {
+
+        int i = 1;
+
+        while (i < this.size) {
+
+            if (this.nodosUsados[i].getCoordX() == coordX && this.nodosUsados[i].getCoordY() == coordY) {
+                return i;
+            }
+
+            i++;
+        }
+
+        if (this.nodosUsados[i].getCoordX() == coordX && this.nodosUsados[i].getCoordY() == coordY)
+            return i;
+
+        return -1;
+
+    }
+
+    // devuelve el costo total para ir de un vertice a otro
+    // para implementar en el TAD Grafo
+    public int caminoMinimo(int o, int d) {
+        // estructuras auxiliares
+        int[] costo = new int[this.cantNodos + 1];
+        for (int i = 1; i <= this.cantNodos; i++) {
+            if (i != o)
+                if (this.SonAdyacentes(i, o)) {
+                    costo[i] = this.listaAdy[i].obtenerNodoPorDestino(o).peso;
+                } else {
+                    costo[i] = Integer.MAX_VALUE;
+                }
+        }
+        int[] camino = new int[this.cantNodos + 1];
+        boolean[] visitado = new boolean[this.cantNodos + 1];
+
+        for (int i = 1; i <= this.cantNodos; i++) {
+            // vertice con la distancia mas corta no visitado
+            int u = distanciaMasCorta(costo, visitado);
+            visitado[u] = true;
+            for (int j = 1; j <= this.cantNodos; j++) {
+                if (this.SonAdyacentes(u, j) && !visitado[j]) {
+
+                    if (this.listaAdy[u].obtenerNodoPorDestino(j).peso + costo[u] < costo[j]) {
+
+                        costo[j] = this.listaAdy[u].obtenerNodoPorDestino(j).peso + costo[u];
+                        camino[j] = u;
+                    }
+                }
+            }
+        }
+
+        print(d, o, camino);
+        return costo[d];
+
+    }
+
+    // implementar
+    private int distanciaMasCorta(int[] costos, boolean[] marcados) {
+        int min = Integer.MAX_VALUE;
+        for (int i = 1; i < costos.length; i++) {
+            if (!marcados[i] && costos[i] <= min) {
+                min = i;
+            }
+        }
+        return min;
+    }
+
+    private void print(int destino, int origen, int previo[]) {
+        System.out.print(origen);
+        if (previo[destino] != -1) // si aun poseo un vertice previo
+            System.out.print(previo[destino]); // recursivamente sigo explorando
+        System.out.printf("%d ", destino); // terminada la recursion imprimo los vertices recorridos
+    }
+
 }

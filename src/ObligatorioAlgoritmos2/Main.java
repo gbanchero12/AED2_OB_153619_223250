@@ -9,38 +9,35 @@ public class Main {
 		
 		Sistema sistema = new Sistema();
 		
-		Retorno ret = sistema.inicializarSistema(10);
+		Retorno ret = sistema.inicializarSistema(6);
 		
 		System.out.println(ret.resultado);
 		
-		String email = "fernandoperez1902@gmail.com";
-		String nombre = "Falopa";
-		
-		ret = sistema.registrarUsuario(email, nombre);
-		
-		System.out.println(ret.resultado);
-		
-		/*email = "putita.com";
-		
-		nombre = "Genaro";
-		
-		ret = sistema.registrarUsuario(email, nombre);
-		
-		System.out.println(ret.resultado);
-		System.out.println(ret.valorString);
-		*/
-		
-		email = "gena.loprete@gmail.com";
-		nombre = "Genaro";
-		
-		ret = sistema.registrarUsuario(email, nombre);
-		
-		
-		email = "fernandoperez1902@gmail.com";
-		ret = sistema.buscarUsuario(email);
-		System.out.println(ret.valorEntero);
+		ret = sistema.registrarUsuario("emailEjemplo", "nombreEjemplo");
 		
 		sistema.listarUsuarios();
+
+		sistema.registrarEsquina(1, 1);
+		sistema.registrarEsquina(1, 2);
+		sistema.registrarEsquina(1, 3);
+		sistema.registrarEsquina(1, 4);
+		sistema.registrarEsquina(1, 5);
+		sistema.registrarEsquina(1, 6);
 		
+		sistema.registrarTramo(1, 1, 1, 6, 1); //hay que registrar los tramos en orden
+		sistema.registrarTramo(1, 1, 1, 2, 1);
+
+		sistema.registrarTramo(1, 2, 1, 3, 1);
+		sistema.registrarTramo(1, 2, 1, 5, 2);
+
+		sistema.registrarTramo(1, 3, 1, 4, 1);
+
+		sistema.registrarTramo(1, 5, 1, 6, 1);
+
+		sistema.registrarTramo(1, 6, 1, 4, 2);
+		
+		
+		
+		sistema.monopatinMasCercano(4, 5);
 	}
 }

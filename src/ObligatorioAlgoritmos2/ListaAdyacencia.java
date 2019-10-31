@@ -62,5 +62,21 @@ public class ListaAdyacencia {
         }
         return encontro;
     }
-    
+
+    public NodoLista obtenerNodoPorDestino (int destino) { // sin usar en Camino mas corto
+        NodoLista aux = this.inicio;
+        
+        while (aux.siguiente != null) {
+            if (aux.destino == destino)
+                {return aux;}
+            aux = aux.siguiente;
+        }
+
+        if (aux.destino == destino) { //ultimoElemento
+            return aux;
+        } else {
+            return null;
+        }
+    }
+
 }

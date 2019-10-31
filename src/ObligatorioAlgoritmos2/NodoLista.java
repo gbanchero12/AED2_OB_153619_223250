@@ -12,9 +12,9 @@ package ObligatorioAlgoritmos2;
 public class NodoLista {
     int destino;
     int peso;
-    NodoLista siguiente;  
-    
-    public NodoLista(int destino , int peso){
+    NodoLista siguiente;
+
+    public NodoLista(int destino, int peso) {
         this.destino = destino;
         this.peso = peso;
         this.siguiente = null;
