@@ -261,7 +261,41 @@ public class Sistema implements ISistema {
 
 	@Override
 	public Retorno monopatinesEnZona(double coordX, double coordY) {
-		return new Retorno(Resultado.NO_IMPLEMENTADA);
+		Retorno ret = new Retorno(Resultado.OK);
+		// Vertice donde se ubica el usuario
+		int ubicacionUsuario = this.grafoSistema.ObtenerPosicionPorCoordenadas(coordX, coordY);
+		
+		
+		List<NodoPunto> monopatines = new ArrayList<>();
+
+		// guardo monopatines:
+		for (NodoPunto monopatin : this.grafoSistema.nodosUsados) {
+			if(monopatin != null){
+			if (monopatin.getTipo() == "monopatin") {
+				monopatines.add(monopatin);
+			}}
+		}
+
+		// calculo camino minimo desde usuario para cada monopatín:
+		for (NodoPunto monopatin_ : monopatines) {
+			int ubicacionMonopatin = this.grafoSistema.ObtenerPosicionPorCoordenadas(monopatin_.getCoordX(),
+					monopatin_.getCoordY());
+			// Me tengo que quedar con el minimo
+			ArrayList<int[]> caminoMinimo = this.grafoSistema.costoCaminoMinimo(ubicacionUsuario, ubicacionMonopatin);
+
+			int[] costoCaminoMinimo = caminoMinimo.get(0);
+
+			int costoMinimoMonopatinActual = costoCaminoMinimo[ubicacionMonopatin]; // ubicacionMonopatin es el destino
+			if (costoMinimoMonopatinActual < 1000) {
+				System.out.print(monopatin_.getCoordX() + ";" + monopatin_.getCoordY() + "|" );
+				ret.valorString += monopatin_.getCoordX() + ";" + monopatin_.getCoordY() + "|";
+			}
+
+		}
+		
+		
+
+		return ret;
 	}
 
 	@Override
