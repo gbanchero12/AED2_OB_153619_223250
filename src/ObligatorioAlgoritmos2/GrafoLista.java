@@ -5,6 +5,9 @@
  */
 package ObligatorioAlgoritmos2;
 
+import java.util.ArrayList;
+
+
 /**
  *
  * @author alumnoFI
@@ -34,8 +37,8 @@ public class GrafoLista {
     }
 
     public void AgregarArista(int o, int d, int p) {
-        this.listaAdy[o].InsertarInicio(d, p); // metodo a crear
-        this.listaAdy[d].InsertarInicio(o, p);
+        this.listaAdy[o].insertarInicio(d, p); // metodo a crear
+        this.listaAdy[d].insertarInicio(o, p);
         // si fuera bidereccionar hay que agregar tambien para el otro lado
     }
 
@@ -44,7 +47,7 @@ public class GrafoLista {
         this.size--;
         this.listaAdy[n] = new ListaAdyacencia();
         for (int i = 0; i < listaAdy.length; i++) {
-            this.listaAdy[i].Eliminar(n);
+            this.listaAdy[i].eliminar(n);
         }
     }
 
@@ -56,8 +59,8 @@ public class GrafoLista {
         return this.listaAdy[v];
     }
 
-    public boolean SonAdyacentes(int a, int b) {
-        return this.listaAdy[a].Existe(b);
+    public boolean sonAdyacentes(int a, int b) {
+        return this.listaAdy[a].existe(b);
     }
 
     public NodoPunto ExisteVertice(int n) {
@@ -106,26 +109,29 @@ public class GrafoLista {
 
     // devuelve el costo total para ir de un vertice a otro
     // para implementar en el TAD Grafo
-    public int caminoMinimo(int o, int d) {
+    public ArrayList<int[]> costoCaminoMinimo(int o, int d) {
         // estructuras auxiliares
+        int[] camino = new int[this.cantNodos + 1];
+        boolean[] visitado = new boolean[this.cantNodos + 1];
         int[] costo = new int[this.cantNodos + 1];
         for (int i = 1; i <= this.cantNodos; i++) {
             if (i != o)
-                if (this.SonAdyacentes(i, o)) {
+                if (this.sonAdyacentes(i, o)) {
                     costo[i] = this.listaAdy[i].obtenerNodoPorDestino(o).peso;
+                    camino[i] = o;
                 } else {
                     costo[i] = Integer.MAX_VALUE;
                 }
         }
-        int[] camino = new int[this.cantNodos + 1];
-        boolean[] visitado = new boolean[this.cantNodos + 1];
-
-        for (int i = 1; i <= this.cantNodos; i++) {
+        visitado[o] = true;
+        
+        for (int i = 1; i < this.cantNodos; i++) {
             // vertice con la distancia mas corta no visitado
             int u = distanciaMasCorta(costo, visitado);
             visitado[u] = true;
+            
             for (int j = 1; j <= this.cantNodos; j++) {
-                if (this.SonAdyacentes(u, j) && !visitado[j]) {
+                if (this.sonAdyacentes(u, j) && !visitado[j]) {
 
                     if (this.listaAdy[u].obtenerNodoPorDestino(j).peso + costo[u] < costo[j]) {
 
@@ -135,28 +141,47 @@ public class GrafoLista {
                 }
             }
         }
+        ArrayList<int[]> retorno = new ArrayList<>();
 
-        print(d, o, camino);
-        return costo[d];
+        retorno.add(0, costo);
+        retorno.add(1, camino);
+
+        //print(camino, o);
+
+        return retorno;
 
     }
 
     // implementar
     private int distanciaMasCorta(int[] costos, boolean[] marcados) {
         int min = Integer.MAX_VALUE;
-        for (int i = 1; i < costos.length; i++) {
-            if (!marcados[i] && costos[i] <= min) {
+        for (int i = 1; i < costos.length; i++) { // siempre debe de ser '<' porque comparamos Integer.MaxVALUE
+            if (!marcados[i] && costos[i] < min) {
                 min = i;
             }
         }
         return min;
     }
 
-    private void print(int destino, int origen, int previo[]) {
-        System.out.print(origen);
-        if (previo[destino] != -1) // si aun poseo un vertice previo
-            System.out.print(previo[destino]); // recursivamente sigo explorando
-        System.out.printf("%d ", destino); // terminada la recursion imprimo los vertices recorridos
+    private void print(int parent[], int j)
+{
+    
+    if (parent[j]==0)
+        return;
+
+    print(parent, parent[j]);
+
+    System.out.print(j);
+}
+
+    public String guardarCaminoMinimo(int destino, int origen, int previo[], String camino) { // ver
+        
+            if (destino != 0 && (destino != origen)){
+                camino += (" / " + destino + " >- " + previo[destino]);
+                camino = guardarCaminoMinimo( previo[destino],  origen , previo,  camino);
+            }
+
+        return camino;
     }
 
 }

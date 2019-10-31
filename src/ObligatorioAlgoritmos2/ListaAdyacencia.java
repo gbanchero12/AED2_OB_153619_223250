@@ -18,7 +18,7 @@ public class ListaAdyacencia {
         return (this.size == 0);
     }
 
-    public void InsertarInicio(int destino, int peso) {
+    public void insertarInicio(int destino, int peso) {
         NodoLista nuevo = new NodoLista(destino, peso);
         if (this.EsVacia()) {
             inicio = nuevo;
@@ -29,7 +29,7 @@ public class ListaAdyacencia {
         size++;
     }
 
-    public void Eliminar(int n) {
+    public void eliminar(int n) {
         if (!this.EsVacia()) {
             NodoLista aux = this.inicio;
             if (aux.destino != n) {
@@ -45,7 +45,7 @@ public class ListaAdyacencia {
         }
     }
 
-    public boolean Existe(int n) {
+    public boolean existe(int n) {
         boolean encontro = false;
         if (this.EsVacia()) {
             return encontro;
