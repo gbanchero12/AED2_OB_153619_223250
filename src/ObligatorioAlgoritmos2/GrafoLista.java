@@ -6,6 +6,7 @@
 package ObligatorioAlgoritmos2;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -183,5 +184,19 @@ public class GrafoLista {
 
         return camino;
     }
+
+	public List<NodoPunto> obtenerMonopatines() {
+
+        List<NodoPunto> monopatines = new ArrayList<>();
+
+        // guardo monopatines:
+		for (NodoPunto monopatin : this.nodosUsados) {
+			if(monopatin != null){
+			if (monopatin.getTipo() == "monopatin") {
+				monopatines.add(monopatin);
+			}}
+		}        
+		return monopatines;
+	}
 
 }

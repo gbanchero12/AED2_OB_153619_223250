@@ -215,15 +215,7 @@ public class Sistema implements ISistema {
 			return ret;
 		}
 
-		List<NodoPunto> monopatines = new ArrayList<>();
-
-		// guardo monopatines:
-		for (NodoPunto monopatin : this.grafoSistema.nodosUsados) {
-			if(monopatin != null){
-			if (monopatin.getTipo() == "monopatin") {
-				monopatines.add(monopatin);
-			}}
-		}
+		List<NodoPunto> monopatines = grafoSistema.obtenerMonopatines();
 
 		int costoMonopatinMasCercano = Integer.MAX_VALUE;
 		String camino = "";
@@ -245,14 +237,13 @@ public class Sistema implements ISistema {
 			}
 
 		}
-
-		ret.valorEntero = costoMonopatinMasCercano;
-
+		
 		StringBuffer sb = new StringBuffer(camino);
 		sb.reverse();
-		System.out.print("Camino: " + sb);
+		//System.out.print("Camino: " + sb);
+		//System.out.println("Costo: " + costoMonopatinMasCercano);
 
-		System.out.println("Costo: " + costoMonopatinMasCercano);
+		ret.valorEntero = costoMonopatinMasCercano;
 		ret.valorString = camino;
 		ret.resultado = Retorno.Resultado.OK;
 
@@ -266,15 +257,7 @@ public class Sistema implements ISistema {
 		int ubicacionUsuario = this.grafoSistema.ObtenerPosicionPorCoordenadas(coordX, coordY);
 		
 		
-		List<NodoPunto> monopatines = new ArrayList<>();
-
-		// guardo monopatines:
-		for (NodoPunto monopatin : this.grafoSistema.nodosUsados) {
-			if(monopatin != null){
-			if (monopatin.getTipo() == "monopatin") {
-				monopatines.add(monopatin);
-			}}
-		}
+		List<NodoPunto> monopatines = grafoSistema.obtenerMonopatines();
 
 		// calculo camino minimo desde usuario para cada monopatín:
 		for (NodoPunto monopatin_ : monopatines) {
@@ -287,14 +270,12 @@ public class Sistema implements ISistema {
 
 			int costoMinimoMonopatinActual = costoCaminoMinimo[ubicacionMonopatin]; // ubicacionMonopatin es el destino
 			if (costoMinimoMonopatinActual < 1000) {
-				System.out.print(monopatin_.getCoordX() + ";" + monopatin_.getCoordY() + "|" );
+				//System.out.print(monopatin_.getCoordX() + ";" + monopatin_.getCoordY() + "|" );
 				ret.valorString += monopatin_.getCoordX() + ";" + monopatin_.getCoordY() + "|";
+				
 			}
 
 		}
-		
-		
-
 		return ret;
 	}
 
