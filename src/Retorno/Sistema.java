@@ -222,29 +222,32 @@ public class Sistema implements ISistema {
 		int[] costosMinimos = this.grafoSistema.caminoMinimo(ubicacionUsuario);
 
 		int minimo = Integer.MAX_VALUE;
-		int destino = 1;
-		while (destino < nodosUsados.length) {
-			if (nodosUsados[destino].getTipo() == "monopatin") {
+		int destino = 0;
+		int i = 1;
+		while (i < nodosUsados.length) {
+			if (nodosUsados[i].getTipo() == "monopatin") {
 				encontre = true;
-				if (costosMinimos[destino] < minimo) {
-					minimo = costosMinimos[destino];
+				if (costosMinimos[i] < minimo) {
+					minimo = costosMinimos[i];
+					destino = i;
 				}
 			}
-			destino++;
+			i++;
 		}
-
-		int [] camino = new int[this.grafoSistema.cantNodos];
+		
+		int [] caminoEfectivo = new int[this.grafoSistema.cantNodos];
 
 		if (encontre) {
-			camino = this.grafoSistema.guardarCaminoMinimo(destino - 1, ubicacionUsuario, //guardo camino a recorrer
-					this.grafoSistema.camino, camino ,0);			
-			ret.valorString += this.grafoSistema.imprimirCaminoMinimo(camino); //imprimo mensaje con coordenadas del camino a realizar 
+			caminoEfectivo = this.grafoSistema.guardarCaminoMinimo(destino, ubicacionUsuario, //guardo camino a recorrer
+					this.grafoSistema.camino, caminoEfectivo ,0);			
+			ret.valorEntero = minimo;
+			ret.valorString += this.grafoSistema.imprimirCaminoMinimo(caminoEfectivo, destino); //imprimo mensaje con coordenadas del camino a realizar 
 		} else {
 			ret.valorString = "No se encontraron monopatines.";
 			ret.resultado = Retorno.Resultado.ERROR_2;
 		}
-		System.out.println(ret.valorString);
-		System.out.println(ret.resultado);
+		System.out.println(ret.valorString + " costo " + minimo);
+		//System.out.println(ret.resultado);
 		return ret;
 	}
 

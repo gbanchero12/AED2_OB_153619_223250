@@ -8,7 +8,6 @@ package ObligatorioAlgoritmos2;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  *
  * @author alumnoFI
@@ -21,9 +20,6 @@ public class GrafoLista {
     public NodoPunto[] nodosUsados;
 
     public int[] camino;
-
-
-
 
     // constructor
     public GrafoLista(int n) {
@@ -130,12 +126,12 @@ public class GrafoLista {
                 }
         }
         visitado[o] = true;
-        
+
         for (int i = 1; i < this.cantNodos; i++) {
             // vertice con la distancia mas corta no visitado
             int u = distanciaMasCorta(costo, visitado);
             visitado[u] = true;
-            
+
             for (int j = 1; j <= this.cantNodos; j++) {
                 if (this.sonAdyacentes(u, j) && !visitado[j]) {
 
@@ -157,37 +153,48 @@ public class GrafoLista {
         int min = Integer.MAX_VALUE;
         for (int i = 1; i < costos.length; i++) { // siempre debe de ser '<' porque comparamos Integer.MaxVALUE
             if (!marcados[i] && costos[i] < min) {
-                min = i;
+                min = costos[i];
             }
         }
-        return min;
-    }
-	
-    public int[] guardarCaminoMinimo(int destino, int origen, int previo[], int[] camino, int i) { // ver
+
+        for (int j = 0; j < costos.length; j++) {
+            if (costos[j] == min) {
+                return j;
+            }
+        }
         
-        if (destino != 0 && (destino != origen)){
-            
-            camino = guardarCaminoMinimo( previo[destino],  origen , previo,  camino, i + 1);
+        return -1;
+    }
+
+    public int[] guardarCaminoMinimo(int destino, int origen, int previo[], int[] camino, int i) { // ver
+
+        if (destino != 0 && (destino != origen)) {
+
+            camino = guardarCaminoMinimo(previo[destino], origen, previo, camino, i + 1);
             camino[i] = (previo[destino]);
         }
 
-    return camino;
-}
+        return camino;
+    }
 
-    public String imprimirCaminoMinimo (int[] camino){
+    public String imprimirCaminoMinimo(int[] camino, int destino) {
+        int actual = 0;
         String mensaje = "";
-        for (int i = camino.length - 1; i > 0 ; i-- ){
-            if (camino[i] != 0){
-                mensaje += (int) nodosUsados[i].getCoordX() + ";" + (int) nodosUsados[i].getCoordY() + "|"; 
+        for (int i = camino.length - 1; i >= 0; i--) {
+            actual = camino[i];
+            if (actual != 0) {
+                mensaje += (int) nodosUsados[actual].getCoordX() + ";" + (int) nodosUsados[actual].getCoordY() + "|";
             }
         }
 
-        if(mensaje == ""){
+        if (mensaje == "") {
             mensaje = "El monopatin se encuentra en la ubicacion del usuario.";
+            return mensaje;
         }
+
+        mensaje += (int) nodosUsados[destino].getCoordX() + ";" + (int) nodosUsados[destino].getCoordY() + "|";
 
         return mensaje;
     }
-
 
 }
