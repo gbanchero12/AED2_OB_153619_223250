@@ -236,14 +236,13 @@ public class Sistema implements ISistema {
 		int [] camino = new int[this.grafoSistema.cantNodos];
 
 		if (encontre) {
-			camino = this.grafoSistema.guardarCaminoMinimo(destino - 1, ubicacionUsuario, //guardo camino minimo en array de int
+			camino = this.grafoSistema.guardarCaminoMinimo(destino - 1, ubicacionUsuario, //guardo camino a recorrer
 					this.grafoSistema.camino, camino ,0);			
-			ret.valorString += this.grafoSistema.imprimirCaminoMinimo(camino); //imrpimo mensaje con coordenadas del camino a realizar 
+			ret.valorString += this.grafoSistema.imprimirCaminoMinimo(camino); //imprimo mensaje con coordenadas del camino a realizar 
 		} else {
 			ret.valorString = "No se encontraron monopatines.";
 			ret.resultado = Retorno.Resultado.ERROR_2;
 		}
-		
 		System.out.println(ret.valorString);
 		System.out.println(ret.resultado);
 		return ret;
@@ -267,8 +266,6 @@ public class Sistema implements ISistema {
 				}
 			}
 		}
-
-		
 		System.out.println(ret.valorString);
 		System.out.println(ret.resultado);
 		return ret;
