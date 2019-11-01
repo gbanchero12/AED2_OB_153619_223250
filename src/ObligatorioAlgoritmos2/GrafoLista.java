@@ -158,11 +158,11 @@ public class GrafoLista {
         }
 
         for (int j = 0; j < costos.length; j++) {
-            if (costos[j] == min) {
+            if (!marcados[j] && costos[j] == min) {
                 return j;
             }
         }
-        
+
         return -1;
     }
 

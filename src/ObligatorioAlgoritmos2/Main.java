@@ -33,8 +33,8 @@ public class Main {
 		sistema.registrarEsquina(1, 4);
 		sistema.registrarEsquina(1, 5);
 		sistema.registrarEsquina(1, 6);
+		//sistema.registrarMonopatin("chipiId1", 1, 7);
 		sistema.registrarEsquina(1, 7);
-		//sistema.registrarMonopatin("chipId1", 1, 7);
 		
 				//           CoordX   CoordY Metros
 		sistema.registrarTramo(1, 1, 	1, 6,	 1); 
@@ -47,8 +47,8 @@ public class Main {
 		sistema.registrarTramo(1, 3,	1, 7,	 90);
 
 		//sistema.grafoSistema.costoCaminoMinimo(1, 4);
-		sistema.monopatinMasCercano(1, 1);
-		//sistema.monopatinesEnZona(1, 1);
+		sistema.monopatinMasCercano(1, 7);
+		sistema.monopatinesEnZona(1, 1);
 		
 	}
 }
