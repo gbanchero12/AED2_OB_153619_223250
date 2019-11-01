@@ -15,6 +15,8 @@ public class Sistema implements ISistema {
 	public Arbol arbolUsuarios;
 	public GrafoLista grafoSistema;
 
+	private final int LIMITE_LISTADO_MONOPATINES = 1000;
+
 	@Override
 	public Retorno inicializarSistema(int maxPuntos) {
 
@@ -207,75 +209,68 @@ public class Sistema implements ISistema {
 	@Override
 	public Retorno monopatinMasCercano(double coordX, double coordY) {
 		Retorno ret = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
+		ret.valorString = "Camino => Ubicacion Usuario: " + (int) coordX + ";" + (int) coordY + " -> ";
+		NodoPunto[] nodosUsados = this.grafoSistema.nodosUsados;
+		boolean encontre = false;
+
 		// Vertice donde se ubica el usuario
 		int ubicacionUsuario = this.grafoSistema.ObtenerPosicionPorCoordenadas(coordX, coordY);
-
-		if (ubicacionUsuario == -1) {
+		if (ubicacionUsuario == -1) {// la esquina no existe
 			ret.resultado = Retorno.Resultado.ERROR_1;
 			return ret;
 		}
+		int[] costosMinimos = this.grafoSistema.caminoMinimo(ubicacionUsuario);
 
-		List<NodoPunto> monopatines = grafoSistema.obtenerMonopatines();
-
-		int costoMonopatinMasCercano = Integer.MAX_VALUE;
-		String camino = "";
-
-		// calculo camino minimo desde usuario para cada monopatín:
-		for (NodoPunto monopatin_ : monopatines) {
-			int ubicacionMonopatin = this.grafoSistema.ObtenerPosicionPorCoordenadas(monopatin_.getCoordX(),
-					monopatin_.getCoordY());
-			// Me tengo que quedar con el minimo
-			ArrayList<int[]> caminoMinimo = this.grafoSistema.costoCaminoMinimo(ubicacionUsuario, ubicacionMonopatin);
-
-			int[] costoCaminoMinimo = caminoMinimo.get(0);
-			int[] camino_ = caminoMinimo.get(1);
-
-			int costoMinimoMonopatinActual = costoCaminoMinimo[ubicacionMonopatin]; // ubicacionMonopatin es el destino
-			if (costoMinimoMonopatinActual < costoMonopatinMasCercano) {
-				camino += this.grafoSistema.guardarCaminoMinimo(ubicacionMonopatin, ubicacionUsuario, camino_, "");
-				costoMonopatinMasCercano = costoMinimoMonopatinActual;
+		int minimo = Integer.MAX_VALUE;
+		int destino = 1;
+		while (destino < nodosUsados.length) {
+			if (nodosUsados[destino].getTipo() == "monopatin") {
+				encontre = true;
+				if (costosMinimos[destino] < minimo) {
+					minimo = costosMinimos[destino];
+				}
 			}
+			destino++;
+		}
 
+		int [] camino = new int[this.grafoSistema.cantNodos];
+
+		if (encontre) {
+			camino = this.grafoSistema.guardarCaminoMinimo(destino - 1, ubicacionUsuario, //guardo camino minimo en array de int
+					this.grafoSistema.camino, camino ,0);			
+			ret.valorString += this.grafoSistema.imprimirCaminoMinimo(camino); //imrpimo mensaje con coordenadas del camino a realizar 
+		} else {
+			ret.valorString = "No se encontraron monopatines.";
+			ret.resultado = Retorno.Resultado.ERROR_2;
 		}
 		
-		StringBuffer sb = new StringBuffer(camino);
-		sb.reverse();
-		//System.out.print("Camino: " + sb);
-		//System.out.println("Costo: " + costoMonopatinMasCercano);
-
-		ret.valorEntero = costoMonopatinMasCercano;
-		ret.valorString = camino;
-		ret.resultado = Retorno.Resultado.OK;
-
+		System.out.println(ret.valorString);
+		System.out.println(ret.resultado);
 		return ret;
 	}
 
 	@Override
 	public Retorno monopatinesEnZona(double coordX, double coordY) {
 		Retorno ret = new Retorno(Resultado.OK);
+		ret.valorString = "";
 		// Vertice donde se ubica el usuario
 		int ubicacionUsuario = this.grafoSistema.ObtenerPosicionPorCoordenadas(coordX, coordY);
-		
-		
-		List<NodoPunto> monopatines = grafoSistema.obtenerMonopatines();
 
-		// calculo camino minimo desde usuario para cada monopatín:
-		for (NodoPunto monopatin_ : monopatines) {
-			int ubicacionMonopatin = this.grafoSistema.ObtenerPosicionPorCoordenadas(monopatin_.getCoordX(),
-					monopatin_.getCoordY());
-			// Me tengo que quedar con el minimo
-			ArrayList<int[]> caminoMinimo = this.grafoSistema.costoCaminoMinimo(ubicacionUsuario, ubicacionMonopatin);
+		int[] costosMinimos = this.grafoSistema.caminoMinimo(ubicacionUsuario);
 
-			int[] costoCaminoMinimo = caminoMinimo.get(0);
+		NodoPunto[] nodosUsados = this.grafoSistema.nodosUsados;
 
-			int costoMinimoMonopatinActual = costoCaminoMinimo[ubicacionMonopatin]; // ubicacionMonopatin es el destino
-			if (costoMinimoMonopatinActual < 1000) {
-				//System.out.print(monopatin_.getCoordX() + ";" + monopatin_.getCoordY() + "|" );
-				ret.valorString += monopatin_.getCoordX() + ";" + monopatin_.getCoordY() + "|";
-				
+		for (int i = 1; i < nodosUsados.length; i++) {
+			if (nodosUsados[i].getTipo() == "monopatin") {
+				if (costosMinimos[i] < this.LIMITE_LISTADO_MONOPATINES) {
+					ret.valorString += (int) nodosUsados[i].getCoordX() + ";" + (int) nodosUsados[i].getCoordY() + "|";
+				}
 			}
-
 		}
+
+		
+		System.out.println(ret.valorString);
+		System.out.println(ret.resultado);
 		return ret;
 	}
 

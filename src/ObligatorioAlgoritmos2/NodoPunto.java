@@ -19,6 +19,7 @@ public class NodoPunto {
 		
 	}
 	
+
 	public String getTipo() {
 		return tipo;
 	}
@@ -49,7 +50,6 @@ public class NodoPunto {
 	public void setCoordY(double coordY) {
 		this.coordY = coordY;
 	}
-	
 	
 
 }

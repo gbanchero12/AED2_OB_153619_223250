@@ -20,6 +20,11 @@ public class GrafoLista {
     public ListaAdyacencia[] listaAdy;
     public NodoPunto[] nodosUsados;
 
+    public int[] camino;
+
+
+
+
     // constructor
     public GrafoLista(int n) {
         this.size = 0;
@@ -110,7 +115,7 @@ public class GrafoLista {
 
     // devuelve el costo total para ir de un vertice a otro
     // para implementar en el TAD Grafo
-    public ArrayList<int[]> costoCaminoMinimo(int o, int d) {
+    public int[] caminoMinimo(int o) {
         // estructuras auxiliares
         int[] camino = new int[this.cantNodos + 1];
         boolean[] visitado = new boolean[this.cantNodos + 1];
@@ -142,14 +147,8 @@ public class GrafoLista {
                 }
             }
         }
-        ArrayList<int[]> retorno = new ArrayList<>();
-
-        retorno.add(0, costo);
-        retorno.add(1, camino);
-
-        //print(camino, o);
-
-        return retorno;
+        this.camino = camino;
+        return costo;
 
     }
 
@@ -163,40 +162,32 @@ public class GrafoLista {
         }
         return min;
     }
+	
+    public int[] guardarCaminoMinimo(int destino, int origen, int previo[], int[] camino, int i) { // ver
+        
+        if (destino != 0 && (destino != origen)){
+            
+            camino = guardarCaminoMinimo( previo[destino],  origen , previo,  camino, i + 1);
+            camino[i] = (previo[destino]);
+        }
 
-    private void print(int parent[], int j)
-{
-    
-    if (parent[j]==0)
-        return;
-
-    print(parent, parent[j]);
-
-    System.out.print(j);
+    return camino;
 }
 
-    public String guardarCaminoMinimo(int destino, int origen, int previo[], String camino) { // ver
-        
-            if (destino != 0 && (destino != origen)){
-                camino += (" / " + destino + " >- " + previo[destino]);
-                camino = guardarCaminoMinimo( previo[destino],  origen , previo,  camino);
+    public String imprimirCaminoMinimo (int[] camino){
+        String mensaje = "";
+        for (int i = camino.length - 1; i > 0 ; i-- ){
+            if (camino[i] != 0){
+                mensaje += (int) nodosUsados[i].getCoordX() + ";" + (int) nodosUsados[i].getCoordY() + "|"; 
             }
+        }
 
-        return camino;
+        if(mensaje == ""){
+            mensaje = "El monopatin se encuentra en la ubicacion del usuario.";
+        }
+
+        return mensaje;
     }
 
-	public List<NodoPunto> obtenerMonopatines() {
-
-        List<NodoPunto> monopatines = new ArrayList<>();
-
-        // guardo monopatines:
-		for (NodoPunto monopatin : this.nodosUsados) {
-			if(monopatin != null){
-			if (monopatin.getTipo() == "monopatin") {
-				monopatines.add(monopatin);
-			}}
-		}        
-		return monopatines;
-	}
 
 }
