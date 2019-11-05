@@ -1,23 +1,23 @@
 package Arbol;
 
-public class NodoUsuario {
+public class Nodo {
 	
     //Atributos
     private String email;
     private String nombre;
-	private NodoUsuario der ;
-	private NodoUsuario izq ;
+	private Nodo der ;
+	private Nodo izq ;
 	private int cantidadElementosRecorridos = 0;
 
     //Constructores
-    public NodoUsuario(String email, String nombre){
+    public Nodo(String email, String nombre){
         this.email = email;
         this.nombre = nombre;
         izq = null;
         der = null;
      }
 
-    public NodoUsuario(String email, String nombre, NodoUsuario d, NodoUsuario i){
+    public Nodo(String email, String nombre, Nodo d, Nodo i){
         this.email = email;
         this.nombre = nombre;
         der = d;
@@ -46,18 +46,18 @@ public class NodoUsuario {
     }
     
     //Derecho
-    NodoUsuario getDer(){
+    Nodo getDer(){
         return der;
     }
-    void setDer(NodoUsuario d){
+    void setDer(Nodo d){
        der = d;
     }
     
     //Izquierdo
-    NodoUsuario getIzq(){
+    Nodo getIzq(){
         return izq;
     }
-    void setIzq(NodoUsuario i){
+    void setIzq(Nodo i){
         izq = i;
     }
     

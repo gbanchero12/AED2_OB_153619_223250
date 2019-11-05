@@ -7,48 +7,34 @@ public class Main {
 	
 	public static void main(String args[]) {
 		
-		Sistema sistema = new Sistema();
+		Sistema sistema = new Sistema();		
+		Retorno retorno = sistema.inicializarSistema(10);
+		//registro usuarios
+		sistema.registrarUsuario("gbanchero12@gmail.com", "Guillermo Banchero");
+		sistema.registrarUsuario("fernandoperez1902@gmail.com", "Fernando Perez");
+		sistema.registrarUsuario("ejemplo@gmail.com", "ejemplo");
+		//registro monopatin
+		sistema.registrarMonopatin("monopatinN°1", -34.916782, -56.164835);
+		sistema.registrarMonopatin("monopatinN°2", -34.9100816, -56.1669126);
+		//registro esquinas
+		sistema.registrarEsquina(-34.916282, -56.163241);
+		sistema.registrarEsquina(-34.917689, -56.169123);
+		sistema.registrarEsquina(-34.911345, -56.169123);
+		sistema.registrarEsquina(-34.914567, -56.169256);
+		sistema.registrarEsquina(-34.911555, -56.169555);
+		//registro tramos
+		sistema.registrarTramo(-34.916282, -56.163241, -34.917689, -56.169123, 500);
+		sistema.registrarTramo(-34.917689, -56.169123, -34.911345, -56.169123, 700);
+		sistema.registrarTramo(-34.911345, -56.169123, -34.914567, -56.169256, 500);
+		sistema.registrarTramo(-34.916282, -56.163241, -34.917689, -56.169123, 500);
+		sistema.registrarTramo(-34.914567, -56.169256, -34.911555, -56.169555, 500);
+		sistema.registrarTramo(-34.911555, -56.169555, -34.916782, -56.164835, 500);
+		sistema.registrarTramo(-34.916782, -56.164835, -34.9100816,-56.166916, 500);
+		//
+		sistema.monopatinMasCercano(-34.916282, -56.163241);
+		//sistema.monopatinesEnZona(1, 1);
+		sistema.dibujarMapa();
 		
-		Retorno ret = sistema.inicializarSistema(7);
-		
-		System.out.println(ret.resultado);
-		
-		sistema.registrarUsuario("emailEjemplo@gmail.com", "nombreEjemplo");
-		sistema.registrarUsuario("emailEjemplo2@gmail.com", "nombreEjemplo2");
-		sistema.registrarUsuario("emailEjemplo3@gmail.com", "nombreEjemplo3");
-
-		
-		
-		sistema.listarUsuarios(); 
-
-
-
-		
-		
-		sistema.registrarMonopatin("chipiId1", 1, 1);
-		//sistema.registrarEsquina(1, 1);
-		sistema.registrarEsquina(1, 2);
-		sistema.registrarEsquina(1, 3);
-		
-		sistema.registrarEsquina(1, 4);
-		sistema.registrarEsquina(1, 5);
-		sistema.registrarEsquina(1, 6);
-		//sistema.registrarMonopatin("chipiId1", 1, 7);
-		sistema.registrarEsquina(1, 7);
-		
-				//           CoordX   CoordY Metros
-		sistema.registrarTramo(1, 1, 	1, 6,	 1); 
-		sistema.registrarTramo(1, 1, 	1, 2,	 1); 
-		sistema.registrarTramo(1, 2, 	1, 3,	 10); 
-		sistema.registrarTramo(1, 2, 	1, 5,	 1); 
-		sistema.registrarTramo(1, 3, 	1, 4,	 1); 
-		sistema.registrarTramo(1, 5, 	1, 6,	 1); 
-		sistema.registrarTramo(1, 6, 	1, 4,	 1); 
-		sistema.registrarTramo(1, 3,	1, 7,	 90);
-
-		//sistema.grafoSistema.costoCaminoMinimo(1, 4);
-		sistema.monopatinMasCercano(1, 7);
-		sistema.monopatinesEnZona(1, 1);
 		
 	}
 }

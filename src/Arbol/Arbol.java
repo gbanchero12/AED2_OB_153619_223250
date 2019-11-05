@@ -1,13 +1,16 @@
 package Arbol;
 
+
+import Retorno.Retorno;
+
 public class Arbol {
-	private NodoUsuario raiz;
+	private Nodo raiz;
 
 	public Arbol() {
 		this.raiz = null;
 	}
 
-	public NodoUsuario getRaiz() {
+	public Nodo getRaiz() {
 		return raiz;
 	}
 
@@ -19,7 +22,7 @@ public class Arbol {
 		mostrarPreOrder(this.raiz);
 	}
 
-	public void mostrarPreOrder(NodoUsuario a) {
+	public void mostrarPreOrder(Nodo a) {
 		if (a != null) {
 			System.out.print(a.getEmail() + "   ");
 			mostrarPreOrder(a.getIzq());
@@ -31,7 +34,7 @@ public class Arbol {
 		mostrarInOrder(this.raiz);
 	}
 
-	public void mostrarInOrder(NodoUsuario a) {
+	public void mostrarInOrder(Nodo a) {
 		if (a != null) {
 			mostrarInOrder(a.getIzq());
 			System.out.print(a.getEmail() + "  ");
@@ -43,7 +46,7 @@ public class Arbol {
 		mostrarPosOrder(this.raiz);
 	}
 
-	public void mostrarPosOrder(NodoUsuario a) {
+	public void mostrarPosOrder(Nodo a) {
 		if (a != null) {
 			mostrarPosOrder(a.getIzq());
 			mostrarPosOrder(a.getDer());
@@ -52,7 +55,7 @@ public class Arbol {
 	}
 
 	public boolean existeElemento(String email) {
-		NodoUsuario nodo = obtenerElemento(email, raiz, 0);
+		Nodo nodo = obtenerElemento(email, raiz, 0);
 
 		if (nodo != null) {
 			return true;
@@ -61,7 +64,7 @@ public class Arbol {
 		}
 	}
 
-	public boolean existe(String email, NodoUsuario a) {
+	public boolean existe(String email, Nodo a) {
 		boolean existe;
 		if (a == null)
 			existe = false;
@@ -76,7 +79,7 @@ public class Arbol {
 		return existe;
 	}
 
-	public NodoUsuario obtenerElemento(String email, NodoUsuario nodo, int cantElementos) {
+	public Nodo obtenerElemento(String email, Nodo nodo, int cantElementos) {
 		if (nodo == null) {
 			return nodo;
 		} else {
@@ -93,7 +96,7 @@ public class Arbol {
 	}
 
 
-	public int cantNodos(NodoUsuario nodo) {
+	public int cantNodos(Nodo nodo) {
 		int cont = 0;
 		if (nodo != null) {
 			cont += cantNodos(nodo.getIzq()); // cuenta subarbol izquierdo
@@ -104,7 +107,7 @@ public class Arbol {
 		return cont;
 	}
 
-	public int obtenerPeso(NodoUsuario nodo) {
+	public int obtenerPeso(Nodo nodo) {
 		int peso = 0;
 		int peso_izq = 0;
 		int peso_der = 0;
@@ -118,28 +121,28 @@ public class Arbol {
 		return peso;
 	}
 
-	public void insertarElemento(String email, String nombre, NodoUsuario nodo) {
-		NodoUsuario nuevo = null;
+	public void insertarElemento(String email, String nombre, Nodo nodo) {
+		Nodo nuevo = null;
 
 		if (this.esArbolVacio())
-			this.raiz = new NodoUsuario(email, nombre);
+			this.raiz = new Nodo(email, nombre);
 
 		else if (email.compareTo(nodo.getEmail()) < 0) { // n < dato => insertaré en subárbol izq.
 			if (nodo.getIzq() == null) {
-				nuevo = new NodoUsuario(email, nombre);
+				nuevo = new Nodo(email, nombre);
 				nodo.setIzq(nuevo);
 			} else
 				insertarElemento(email, nombre, nodo.getIzq());
 		} else if (email.compareTo(nodo.getEmail()) > 0) { // n > dato => insertaré en subárbol derecho
 			if (nodo.getDer() == null) {
-				nuevo = new NodoUsuario(email, nombre);
+				nuevo = new Nodo(email, nombre);
 				nodo.setDer(nuevo);
 			} else
 				insertarElemento(email, nombre, nodo.getDer());
 		}
 	}
 
-	public int cantHojas(NodoUsuario nodo) {
+	public int cantHojas(Nodo nodo) {
 		if (nodo.getDer() == null)
 			if (nodo.getIzq() == null)
 				return 1;
@@ -151,7 +154,7 @@ public class Arbol {
 			return cantHojas(nodo.getIzq()) + cantHojas(nodo.getDer());
 	}
 
-	public NodoUsuario borrarMinimo(NodoUsuario nodo) {
+	public Nodo borrarMinimo(Nodo nodo) {
 		if (nodo == null)
 			return nodo;
 
@@ -162,13 +165,25 @@ public class Arbol {
 			return nodo.getDer();
 	}
 
+	public void listarUsuariosRecursivo(Retorno ret) {
+		listarUsuariosRecursivo(this.raiz, ret);
+	}
+	
+	private void listarUsuariosRecursivo(Nodo a, Retorno ret) {
+		if (a != null) {
+			listarUsuariosRecursivo(a.getIzq(), ret);
+			ret.valorString += a.toString().concat("|");
+			listarUsuariosRecursivo(a.getDer(), ret);
+		}
+	}
+
 	public void insertar(String email, String nombre) {
 		raiz = insertar(email, nombre, raiz);
 	}
-
-	private NodoUsuario insertar(String email, String nombre, NodoUsuario a) {
+	
+	private Nodo insertar(String email, String nombre, Nodo a) {
 		if (a == null)
-			a = new NodoUsuario(email, nombre);
+			a = new Nodo(email, nombre);
 		else if (email.compareTo(a.getEmail()) < 0)
 			a.setIzq(insertar(email, nombre, a.getIzq())); 
 		else if (email.compareTo(a.getEmail()) > 0)
@@ -176,23 +191,8 @@ public class Arbol {
 		return a;
 	}
 
-	public int altura() {
-		// TO-DO
-		return 0;
-	}
 	
 
-    public void listar() {
-        listar(this.raiz);
-    }
- 
-    private void listar(NodoUsuario a) {
-        if (a != null) {
-            listar(a.getIzq());
-            System.out.print(a.toString().concat("|"));
-            listar(a.getDer());
-        }
-    }
 
 
 }

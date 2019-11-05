@@ -1,10 +1,9 @@
 package Retorno;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.awt.Desktop;
+import java.net.URL;
 import Arbol.Arbol;
-import Arbol.NodoUsuario;
+import Arbol.Nodo;
 import Retorno.Retorno.Resultado;
 import ObligatorioAlgoritmos2.GrafoLista;
 import ObligatorioAlgoritmos2.NodoPunto;
@@ -12,25 +11,21 @@ import ObligatorioAlgoritmos2.EmailValidator;
 
 public class Sistema implements ISistema {
 
-	public Arbol arbolUsuarios;
-	public GrafoLista grafoSistema;
+	public Arbol usuarios;
+	public GrafoLista grafo;
 
 	private final int LIMITE_LISTADO_MONOPATINES = 1000;
 
 	@Override
 	public Retorno inicializarSistema(int maxPuntos) {
-
 		Retorno ret = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
-
+		usuarios = new Arbol();
 		if (maxPuntos > 0)
-			this.grafoSistema = new GrafoLista(maxPuntos);
+			this.grafo = new GrafoLista(maxPuntos);
 		else {
 			ret.resultado = Retorno.Resultado.ERROR_1;
-			ret.valorString = "La cantidad de puntos debe ser mayor a 0";
+			ret.valorString = "Cantidad de puntos debe ser mayor a 0";
 		}
-
-		arbolUsuarios = new Arbol();
-
 		ret.resultado = Retorno.Resultado.OK;
 
 		return ret;
@@ -38,149 +33,119 @@ public class Sistema implements ISistema {
 
 	@Override
 	public Retorno destruirSistema() {
-
-		Retorno ret = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
-
-		this.grafoSistema = null;
-
-		arbolUsuarios = null;
-
-		ret.resultado = Retorno.Resultado.OK;
-
+		Retorno ret = new Retorno(Retorno.Resultado.OK);
+		usuarios = null;
+		this.grafo = null;
 		return ret;
 	}
 
 	@Override
 	public Retorno registrarUsuario(String email, String nombre) {
+		Retorno retorno = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
+		EmailValidator validator = new EmailValidator();
 
-		Retorno ret = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
+		if (validator.validate(email)) {
 
-		EmailValidator validador = new EmailValidator();
-
-		if (validador.validate(email)) {
-
-			if (!arbolUsuarios.existeElemento(email)) {
-
-				arbolUsuarios.insertar(email, nombre);
-				ret.resultado = Retorno.Resultado.OK;
-
+			if (usuarios.existeElemento(email)) {
+				retorno.valorString = "Ya existe email";
+				retorno.resultado = Retorno.Resultado.ERROR_2;
+			
 			} else {
-
-				ret.resultado = Retorno.Resultado.ERROR_2;
-				ret.valorString = "Ya existe un afiliado con ese email";
+				usuarios.insertar(email, nombre);
+				retorno.resultado = Retorno.Resultado.OK;
+			
 			}
 
 		} else {
-
-			ret.resultado = Retorno.Resultado.ERROR_1;
-			ret.valorString = "La direcci�n de email no es una direcci�n v�lida";
-
+			retorno.resultado = Retorno.Resultado.ERROR_1;
+			retorno.valorString = "La direccion ingresada no es valida";
+			
 		}
-
-		return ret;
+		return retorno;
 	}
 
 	@Override
 	public Retorno buscarUsuario(String email) {
-
-		Retorno ret = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
-
+		Retorno retorno = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
 		EmailValidator validador = new EmailValidator();
 
 		if (validador.validate(email)) {
-
-			NodoUsuario nodo = arbolUsuarios.obtenerElemento(email, arbolUsuarios.getRaiz(), 0);
-
+			Nodo nodo = usuarios.obtenerElemento(email, usuarios.getRaiz(), 0);
+			
 			if (nodo != null) {
-
-				ret.resultado = Retorno.Resultado.OK;
-				ret.valorString = nodo.toString();
-				ret.valorEntero = nodo.getCantidadElementosRecorridos();
-
+				retorno.resultado = Retorno.Resultado.OK;
+				retorno.valorString = nodo.toString();
+				retorno.valorEntero = nodo.getCantidadElementosRecorridos();
 			} else {
-
-				ret.resultado = Retorno.Resultado.ERROR_2;
-				ret.valorString = "El usuario no existe";
+				retorno.resultado = Retorno.Resultado.ERROR_2;
+				retorno.valorString = "El usuario no existe";
+				}
+		} else {
+			retorno.resultado = Retorno.Resultado.ERROR_1;
+			retorno.valorString = "La direccion ingresada no es valida";
 			}
 
-		} else {
-
-			ret.resultado = Retorno.Resultado.ERROR_1;
-			ret.valorString = "La direcci�n de email no es una direcci�n v�lida";
-
-		}
-
-		return ret;
-
+		return retorno;
 	}
 
 	@Override
 	public Retorno listarUsuarios() {
 
-		Retorno ret = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
+		Retorno retorno = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
+		retorno.valorString = "";
 
-		arbolUsuarios.listar();
+		usuarios.listarUsuariosRecursivo(retorno);
 
-		ret.resultado = Retorno.Resultado.OK;
+		retorno.valorString = retorno.valorString
+				.substring(0, retorno.valorString.length() - 1); // testSistema valida que el ultimo elemento sea distinto de |
 
-		return ret;
-
+		retorno.resultado = Retorno.Resultado.OK;
+		return retorno;
 	}
 
 	@Override
 	public Retorno registrarMonopatin(String chipId, double coordX, double coordY) {
 
-		Retorno ret = new Retorno(Resultado.NO_IMPLEMENTADA);
+		Retorno retorno = new Retorno(Resultado.NO_IMPLEMENTADA);
 
-		NodoPunto nodo = new NodoPunto("monopatin", true, chipId, coordX, coordY);
+		NodoPunto nodo = new NodoPunto("monopatin", true, chipId, coordX, coordY, "Activo");
 
-		if (grafoSistema.size < grafoSistema.cantNodos) {
+		if (grafo.size < grafo.cantNodos) {
 
-			if (grafoSistema.ObtenerNodoPorCoord(coordX, coordY) == null) {
-				grafoSistema.AgregarVertice(grafoSistema.size + 1, nodo);
-				ret.resultado = Resultado.OK;
+			if (grafo.ObtenerNodoPorCoord(coordX, coordY) != null) {				
+				retorno.resultado = Resultado.ERROR_2;
+				retorno.valorString = "Ya existe un punto en las coordenadas x e y propuestas";
 			} else {
-
-				ret.resultado = Resultado.ERROR_2;
-				ret.valorString = "Ya existe un punto en las coordenadas x e y propuestas";
-
+				grafo.AgregarVertice(grafo.size + 1, nodo);
+				retorno.resultado = Resultado.OK;
 			}
-
 		} else {
-			ret.resultado = Resultado.ERROR_1;
-			ret.valorString = "El sistema ya tiene registrada la cantidad m�xima";
-
+			retorno.resultado = Resultado.ERROR_1;
+			retorno.valorString = "El sistema ya tiene registrada la cantidad m�xima";
 		}
-
-		return ret;
-
+		return retorno;
 	}
 
 	@Override
 	public Retorno registrarEsquina(double coordX, double coordY) {
 
-		Retorno ret = new Retorno(Resultado.NO_IMPLEMENTADA);
+		Retorno ret = new Retorno(Resultado.OK);
 
-		NodoPunto nodo = new NodoPunto("esquina", true, null, coordX, coordY);
+		NodoPunto nodo = new NodoPunto("esquina", true, null, coordX, coordY, "Activo");
 
-		if (grafoSistema.size < grafoSistema.cantNodos) {
+		if (grafo.size < grafo.cantNodos) {
 
-			if (grafoSistema.ObtenerNodoPorCoord(coordX, coordY) == null) {
-				grafoSistema.AgregarVertice(grafoSistema.size + 1, nodo);
-				ret.resultado = Resultado.OK;
+			if (grafo.ObtenerNodoPorCoord(coordX, coordY) == null) {
+				grafo.AgregarVertice(grafo.size + 1, nodo);
 			} else {
-
 				ret.resultado = Resultado.ERROR_2;
-				ret.valorString = "Ya existe un punto en las coordenadas x e y propuestas";
 
+				ret.valorString = "Ya existe un punto en las coordenadas ingresadas";
 			}
-
 		} else {
 			ret.resultado = Resultado.ERROR_1;
-			ret.valorString = "El sistema ya tiene registrada la cantidad m�xima";
-
+			ret.valorString = "Ya estan registradas la maxima cantidad";
 		}
-
 		return ret;
 	}
 
@@ -190,42 +155,44 @@ public class Sistema implements ISistema {
 		if (metros <= 0)
 			return new Retorno(Resultado.ERROR_1);
 
-		int o = this.grafoSistema.ObtenerPosicionPorCoordenadas(coordXi, coordYi);// Recorre lista de nodosUsados
-		int d = this.grafoSistema.ObtenerPosicionPorCoordenadas(coordXf, coordYf);
+		// Recorro lista de Nodos y retorno la posicion segun las coordenadas
+		int desde = this.grafo.ObtenerPosicionPorCoordenadas(coordXi, coordYi);
+		int hasta = this.grafo.ObtenerPosicionPorCoordenadas(coordXf, coordYf);
 
-		if (o != -1 && d != -1) {
-
-			if (this.grafoSistema.sonAdyacentes(o, d)) // Ya existe esa tramo
-				return new Retorno(Resultado.ERROR_3);
-
-			this.grafoSistema.AgregarArista(o, d, metros);
-			return new Retorno(Resultado.OK);
-		} else {
+		if (desde == -1 || hasta == -1) {
 			// No se encontraron vertices con esas coordenadas
 			return new Retorno(Resultado.ERROR_2);
+
+		} else {
+			if (this.grafo.sonAdyacentes(desde, hasta)) // Ya existe ese tramo
+				return new Retorno(Resultado.ERROR_3);
+
+			this.grafo.AgregarArista(desde, hasta, metros);
+
+			return new Retorno(Resultado.OK);
 		}
 	}
 
 	@Override
 	public Retorno monopatinMasCercano(double coordX, double coordY) {
-		Retorno ret = new Retorno(Retorno.Resultado.NO_IMPLEMENTADA);
+		Retorno ret = new Retorno(Retorno.Resultado.OK);
 		ret.valorString = "Camino => Ubicacion Usuario: " + (int) coordX + ";" + (int) coordY + " -> ";
-		NodoPunto[] nodosUsados = this.grafoSistema.nodosUsados;
+		NodoPunto[] nodosUsados = this.grafo.nodosUsados;
 		boolean encontre = false;
 
 		// Vertice donde se ubica el usuario
-		int ubicacionUsuario = this.grafoSistema.ObtenerPosicionPorCoordenadas(coordX, coordY);
+		int ubicacionUsuario = this.grafo.ObtenerPosicionPorCoordenadas(coordX, coordY);
 		if (ubicacionUsuario == -1) {// la esquina no existe
 			ret.resultado = Retorno.Resultado.ERROR_1;
 			return ret;
 		}
-		int[] costosMinimos = this.grafoSistema.caminoMinimo(ubicacionUsuario);
+		int[] costosMinimos = this.grafo.caminoMinimo(ubicacionUsuario);
 
 		int minimo = Integer.MAX_VALUE;
 		int destino = 0;
 		int i = 1;
 		while (i < nodosUsados.length) {
-			if (nodosUsados[i].getTipo() == "monopatin") {
+			if (nodosUsados[i] != null && nodosUsados[i].getTipo() == "monopatin") {
 				encontre = true;
 				if (costosMinimos[i] < minimo) {
 					minimo = costosMinimos[i];
@@ -234,20 +201,21 @@ public class Sistema implements ISistema {
 			}
 			i++;
 		}
-		
-		int [] caminoEfectivo = new int[this.grafoSistema.cantNodos];
 
+		int[] caminoEfectivo = new int[this.grafo.cantNodos];
 		if (encontre) {
-			caminoEfectivo = this.grafoSistema.guardarCaminoMinimo(destino, ubicacionUsuario, //guardo camino a recorrer
-					this.grafoSistema.camino, caminoEfectivo ,0);			
+			caminoEfectivo = this.grafo.guardarCaminoMinimo(destino, ubicacionUsuario, // guardo camino a
+																								// recorrer
+					this.grafo.camino, caminoEfectivo, 0);
 			ret.valorEntero = minimo;
-			ret.valorString += this.grafoSistema.imprimirCaminoMinimo(caminoEfectivo, destino); //imprimo mensaje con coordenadas del camino a realizar 
+			ret.valorString += this.grafo.imprimirCaminoMinimo(caminoEfectivo, destino); // imprimo mensaje con
+																								// coordenadas del
+																								// camino a realizar
 		} else {
 			ret.valorString = "No se encontraron monopatines.";
 			ret.resultado = Retorno.Resultado.ERROR_2;
 		}
 		System.out.println(ret.valorString + " costo " + minimo);
-		//System.out.println(ret.resultado);
 		return ret;
 	}
 
@@ -256,19 +224,20 @@ public class Sistema implements ISistema {
 		Retorno ret = new Retorno(Resultado.OK);
 		ret.valorString = "";
 		// Vertice donde se ubica el usuario
-		int ubicacionUsuario = this.grafoSistema.ObtenerPosicionPorCoordenadas(coordX, coordY);
+		int ubicacionUsuario = this.grafo.ObtenerPosicionPorCoordenadas(coordX, coordY);
 
-		int[] costosMinimos = this.grafoSistema.caminoMinimo(ubicacionUsuario);
+		int[] costosMinimos = this.grafo.caminoMinimo(ubicacionUsuario);
 
-		NodoPunto[] nodosUsados = this.grafoSistema.nodosUsados;
+		NodoPunto[] nodosUsados = this.grafo.nodosUsados;
 
 		for (int i = 1; i < nodosUsados.length; i++) {
-			if (nodosUsados[i].getTipo() == "monopatin") {
+			if (nodosUsados[i] != null && nodosUsados[i].getTipo() == "monopatin") {
 				if (costosMinimos[i] < this.LIMITE_LISTADO_MONOPATINES) {
 					ret.valorString += (int) nodosUsados[i].getCoordX() + ";" + (int) nodosUsados[i].getCoordY() + "|";
 				}
 			}
 		}
+		ret.valorString = ret.valorString.substring(0, ret.valorString.length() - 1);
 		System.out.println(ret.valorString);
 		System.out.println(ret.resultado);
 		return ret;
@@ -276,7 +245,40 @@ public class Sistema implements ISistema {
 
 	@Override
 	public Retorno dibujarMapa() {
-		return new Retorno(Resultado.NO_IMPLEMENTADA);
+
+		String url = getURLMapaPuntos();
+
+		try {
+			Desktop.getDesktop().browse(new URL(url).toURI());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new Retorno(Resultado.OK);
+	}
+
+	private String getURLMapaPuntos() {
+		String url = "https://maps.googleapis.com/maps/api/staticmap?center=Montevideo,UY&zoom=14&size=800x800";
+		NodoPunto[] nodosUsados = this.grafo.nodosUsados;
+		String color = "";
+		for (int i = 1; i < nodosUsados.length; i++) {
+			if(nodosUsados[i] != null) {
+				if (nodosUsados[i].getEstado() == "Activo")
+					color = "green";
+				if (nodosUsados[i].getEstado() == "Descargado")
+					color = "yellow";
+				if (nodosUsados[i].getEstado() == "Averiado")
+					color = "red";
+
+			if (nodosUsados[i].getTipo() == "monopatin") {
+				url += "&markers=color:" + color + "%7Clabel:M%7C" + nodosUsados[i].getCoordX() + ","
+						+ nodosUsados[i].getCoordY();
+			} }
+		}
+
+		url += "&key=AIzaSyBxiN8NsAUD9OoLIrfrauQhs4PD73PGTMY";
+
+		return url;
 	}
 
 }

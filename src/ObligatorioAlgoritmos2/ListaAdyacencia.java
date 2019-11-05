@@ -63,7 +63,7 @@ public class ListaAdyacencia {
         return encontro;
     }
 
-    public NodoLista obtenerNodoPorDestino (int destino) { // sin usar en Camino mas corto
+    public NodoLista obtenerNodo (int destino) { 
         NodoLista aux = this.inicio;
         
         while (aux.siguiente != null) {

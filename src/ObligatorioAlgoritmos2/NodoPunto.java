@@ -7,16 +7,16 @@ public class NodoPunto {
 	private String chipId;
 	private double coordX;
 	private double coordY;
+	private String estado;
 	
-	
-	public NodoPunto(String tipo, boolean usado, String chipId, double coordX, double coordY) {
+	public NodoPunto(String tipo, boolean usado, String chipId, double coordX, double coordY, String estado) {
 		
 		this.tipo = tipo;
 		this.usado = usado;
 		this.chipId = chipId;
 		this.coordX = coordX;
 		this.coordY = coordY;
-		
+		this.estado = "Activo";
 	}
 	
 
@@ -49,6 +49,11 @@ public class NodoPunto {
 	}
 	public void setCoordY(double coordY) {
 		this.coordY = coordY;
+	}
+
+
+	public String getEstado() {
+		return estado;
 	}
 	
 
